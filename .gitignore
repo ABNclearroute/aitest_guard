@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.eggs/
+*.egg-info/
+*.egg
+.venv/
+venv/
+vendor/
+logs/
+aitest-report.json

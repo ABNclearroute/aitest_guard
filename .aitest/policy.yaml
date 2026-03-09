@@ -1,0 +1,237 @@
+language: python
+framework: pytest
+
+# ---------------------------
+# UNIT TEST GOVERNANCE
+# ---------------------------
+unit_tests:
+  enforce: true
+  ignore_private_functions: true
+  enforce_naming: true
+
+  required_scenarios:
+    - happy_path
+    - invalid_input
+    - exception_case
+
+  min_assertions_per_test: 1
+  require_pytest_raises_for_exceptions: true
+  disallow_empty_tests: true
+
+# ---------------------------
+# RISK-BASED TESTING (Optional Tagging Support)
+# ---------------------------
+risk_classification:
+  critical:
+    required_scenarios:
+      - happy_path
+      - boundary_condition
+      - invalid_input
+      - exception_case
+      - edge_case
+    min_assertions_per_test: 2
+
+  standard:
+    required_scenarios:
+      - happy_path
+      - invalid_input
+      - exception_case
+
+# ---------------------------
+# INTEGRATION TEST GOVERNANCE
+# ---------------------------
+integration_tests:
+  enforce: true
+  detect_external_calls:
+    - requests
+    - httpx
+    - boto3
+
+  required_scenarios:
+    - success_response
+    - client_error
+    - server_error
+    - timeout
+
+  require_mocking: true
+  require_status_code_assertion: true
+
+# ---------------------------
+# WEAK TEST DETECTION
+# ---------------------------
+weak_test_detection:
+  enabled: true
+  patterns:
+    - "assert True"
+    - "assert False"
+    - "assert 1"
+    - "assert 0"
+    - "assert result is not None"
+    - "assert response is not None"
+
+# ---------------------------
+# ASSERTION QUALITY POLICY
+# ---------------------------
+assertion_policy:
+  disallow_generic_assertions:
+    - "assert result is not None"
+    - "assert True"
+
+  require_meaningful_assertion: true
+
+# ---------------------------
+# COVERAGE POLICY
+# ---------------------------
+coverage:
+  enabled: true
+  minimum: 80
+  diff_coverage_minimum: 85
+  fail_on_drop: true
+  ignore_test_files: true
+
+# ---------------------------
+# ENFORCEMENT BEHAVIOR
+# ---------------------------
+enforcement:
+  mode: strict        # strict | warn
+  scope: full_repo       # staged | full_repo | modified | pr
+  pr_base: main       # base branch for scope: pr (e.g. main, origin/main)
+  block_commit: true
+  block_merge: false
+  block_release: false
+  require_manual_override_for_high: false
+
+# ---------------------------
+# LLM CONFIGURATION
+# ---------------------------
+llm:
+  enabled: true
+  provider: openai
+  model: gpt-4o-mini
+  temperature: 0.2
+  max_tokens: 1500
+  auto_format: true
+  require_manual_review: true
+
+# ---------------------------
+# AI GENERATION
+# ---------------------------
+ai_generation:
+  enforce_output_validation: true
+  reject_on_validation_failure: true
+
+# ---------------------------
+# AI OUTPUT GOVERNANCE (Enterprise)
+# ---------------------------
+ai_output_governance:
+  traceability_policy:
+    enabled: true
+    min_test_case_per_requirement: 1
+    violation_weight: 10
+
+  edge_case_policy:
+    enabled: true
+    min_ratio: 0.2
+    violation_weight: 5
+
+  vague_phrase_policy:
+    enabled: true
+    forbidden_phrases:
+      - "assert result is not None"
+      - "assert True"
+      - "assert False"
+    violation_weight: 3
+
+  deterministic_format_policy:
+    enabled: true
+    required_test_fields:
+      - id
+      - scenario_type
+      - assertions
+    violation_weight: 5
+
+# ---------------------------
+# RISK SCORING
+# ---------------------------
+risk_scoring:
+  weights:
+    MISSING_TRACEABILITY: 10
+    LOW_EDGE_COVERAGE: 5
+    VAGUE_ASSERTION: 3
+    FORMAT_VIOLATION: 5
+    MISSING_SCENARIO: 8
+    WEAK_ASSERTION: 3
+    NO_ASSERTIONS: 5
+    MISSING_SECURITY_TESTS: 15
+    AMBIGUOUS_REQUIREMENT: 8
+    MISSING_ERROR_SPECIFICATION: 8
+    CONTRACT_VERSION_MISMATCH: 10
+  thresholds:
+    low_max: 10
+    medium_max: 50
+
+# ---------------------------
+# RISK CONTEXT (Enterprise v2)
+# ---------------------------
+risk_context:
+  module_multipliers:
+    billing: 2.0
+    auth: 2.0
+    payment: 2.5
+  classification_multipliers:
+    critical: 2.0
+    standard: 1.0
+
+# ---------------------------
+# SECURITY GOVERNANCE
+# ---------------------------
+security_governance:
+  enabled: true
+  required_security_scenarios:
+    - auth_negative
+    - permission_denied
+    - input_validation
+    - injection_attempt
+  violation_weight: 15
+
+# ---------------------------
+# REQUIREMENT GOVERNANCE
+# ---------------------------
+requirement_governance:
+  enabled: true
+  detect_ambiguity_keywords:
+    - should
+    - may
+    - etc
+    - "as needed"
+  require_explicit_error_message: true
+  violation_weight: 8
+
+# ---------------------------
+# AUDIT
+# ---------------------------
+audit:
+  enabled: true
+  retention_days: 90
+  include_artifact_snapshot: false
+  include_risk_score: true
+
+# ---------------------------
+# OUTPUT CONTRACT
+# ---------------------------
+output_contract:
+  version: 1.0
+  enforce_version_match: false
+
+# ---------------------------
+# LLM GOVERNANCE (Optional Intelligence Layer)
+# ---------------------------
+llm_governance:
+  enabled: true
+  mode: advisory   # advisory | scoring | blocking
+  max_repo_tokens: 50000
+  semantic_quality_weight: 5
+  confidence_threshold: 0.5
+  architecture_analysis: true
+  concurrency_detection: true
+  detect_mock_abuse: true

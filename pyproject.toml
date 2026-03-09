@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aitest-guard"
+version = "0.1.0"
+description = "Policy-driven enforcement engine for AI-safe unit tests with optional LLM remediation"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "aitest-guard"}]
+keywords = ["testing", "ai", "policy", "pytest", "pre-commit"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = [
+    "typer>=0.9.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.0.0"]
+watch = ["watchfiles>=0.21.0"]
+
+[project.scripts]
+aitest = "aitest_guard.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["aitest_guard*"]

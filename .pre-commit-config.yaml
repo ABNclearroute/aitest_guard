@@ -1,0 +1,8 @@
+# Example pre-commit config for aitest-guard
+- repo: local
+  hooks:
+    - id: aitest-check
+      name: AI Test Guard
+      entry: aitest check
+      language: system
+      types: [python]
